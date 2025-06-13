@@ -177,7 +177,7 @@ button.active {
 }
 
 footer {
-    background-color: #5083f0;
+    background-color: #35424a;
     color: #ffffff;
     text-align: center;
     padding: 15px 10px;
@@ -261,4 +261,6 @@ footer .footer-content p {
         font-size: 12px;
         padding: 8px 10px;
     }
+
+
 }

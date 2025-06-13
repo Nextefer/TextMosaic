@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reescribidor de Texto</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos2.css') }}">
 </head>
 
 <body>
+
     <header>
-        <div class="titulo">
-            <img src="{{ url_for('static', filename='multimedia/ParaProSolutions.png') }}" alt="Logo" class="logo">
+        <img src="{{ url_for('static', filename='multimedia/ParaProSolutions.png') }}" alt="Logo" class="logo">
             <h1 class="degradado">TextMosaic</h1>
-        </div>
-    </header>
+        <nav class="nav-bar">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="https://textmosaic.onrender.com/">Nosotros</a></li>
+            </ul>
+        </nav>
+    </header> 
 
     <div class="container">
         <div class="textarea-box">
@@ -46,6 +53,8 @@
         </div>
     </footer>
 
+
+
     <script>
         let nivelSeleccionado = 'sencillo';
 
@@ -72,21 +81,21 @@
                 },
                 body: `texto=${encodeURIComponent(texto)}&nivel=${encodeURIComponent(nivelSeleccionado)}`
             })
-            .then(response => response.json())
-            .then(data => {
-                const resultadoArea = document.getElementById('readonlyText');
-                if (typeof data.resultado === "string") {
-                    resultadoArea.value = data.resultado;
-                } else if (typeof data.resultado === "object") {
-                    resultadoArea.value = JSON.stringify(data.resultado, null, 2);
-                } else {
-                    resultadoArea.value = "Respuesta no esperada.";
-                }
-            })
-            .catch(error => {
-                document.getElementById('readonlyText').value = "Error en el parafraseo.";
-                console.error(error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    const resultadoArea = document.getElementById('readonlyText');
+                    if (typeof data.resultado === "string") {
+                        resultadoArea.value = data.resultado;
+                    } else if (typeof data.resultado === "object") {
+                        resultadoArea.value = JSON.stringify(data.resultado, null, 2);
+                    } else {
+                        resultadoArea.value = "Respuesta no esperada.";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('readonlyText').value = "Error en el parafraseo.";
+                    console.error(error);
+                });
         });
 
         document.getElementById('copyText').addEventListener('click', () => {
@@ -108,4 +117,5 @@
         });
     </script>
 </body>
+
 </html>
