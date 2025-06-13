@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reescribidor de Texto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+    <header>
+        <div class="titulo">
+            <img src="{{ url_for('static', filename='multimedia/ParaProSolutions.png') }}" alt="Logo" class="logo">
+            <h1 class="degradado">TextMosaic</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="textarea-box">
+            <textarea id="editableText" placeholder="Ingresa tu texto aquí..."></textarea>
+            <div class="parafraseado">
+                <button id="paraf" class="paraf" type="button">Parafrasear Texto</button>
+            </div>
+            <p>Seleccione un nivel de reescritura:</p>
+            <div class="buttons">
+                <button type="button">Sencillo</button>
+                <button type="button">Medio</button>
+                <button type="button">Formal</button>
+            </div>
+        </div>
+
+        <div class="textarea-box2">
+            <textarea id="readonlyText" readonly placeholder="Resultado del parafraseado..."></textarea>
+            <div class="text-actions">
+                <button id="copyText" type="button">Copiar</button>
+                <button id="cutText" type="button">Cortar</button>
+                <button id="clearText" type="button">Borrar</button>
+            </div>
+        </div>
+    </div> <!-- Cierre del div.container -->
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 TextMosaic. Todos los derechos reservados.</p>
+            <p>Desarrollado por ParaProSolutions</p>
+        </div>
+    </footer>
+
+    <script>
+        let nivelSeleccionado = 'sencillo';
+
+        document.querySelectorAll('.buttons button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Actualiza el nivel seleccionado
+                nivelSeleccionado = button.textContent.toLowerCase();
+
+                // Elimina la clase 'active' de todos los botones
+                document.querySelectorAll('.buttons button').forEach(b => b.classList.remove('active'));
+
+                // Agrega la clase 'active' al botón seleccionado
+                button.classList.add('active');
+            });
+        });
+
+        document.getElementById('paraf').addEventListener('click', () => {
+            const texto = document.getElementById('editableText').value;
+
+            fetch('/parafrasear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `texto=${encodeURIComponent(texto)}&nivel=${encodeURIComponent(nivelSeleccionado)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultadoArea = document.getElementById('readonlyText');
+                if (typeof data.resultado === "string") {
+                    resultadoArea.value = data.resultado;
+                } else if (typeof data.resultado === "object") {
+                    resultadoArea.value = JSON.stringify(data.resultado, null, 2);
+                } else {
+                    resultadoArea.value = "Respuesta no esperada.";
+                }
+            })
+            .catch(error => {
+                document.getElementById('readonlyText').value = "Error en el parafraseo.";
+                console.error(error);
+            });
+        });
+
+        document.getElementById('copyText').addEventListener('click', () => {
+            const readonlyText = document.getElementById('readonlyText');
+            readonlyText.select();
+            document.execCommand('copy');
+            alert('Texto copiado al portapapeles.');
+        });
+
+        document.getElementById('cutText').addEventListener('click', () => {
+            const readonlyText = document.getElementById('readonlyText');
+            readonlyText.select();
+            document.execCommand('cut');
+            alert('Texto cortado al portapapeles.');
+        });
+
+        document.getElementById('clearText').addEventListener('click', () => {
+            document.getElementById('readonlyText').value = '';
+        });
+    </script>
+</body>
+</html>
